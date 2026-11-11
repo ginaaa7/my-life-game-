@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MY LIFE — Prototipo 1.0</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#91b9d4;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#17212b}
+#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%;touch-action:none}
+#hud{position:fixed;inset:0;pointer-events:none;display:none}
+.panel{background:rgba(255,255,255,.9);backdrop-filter:blur(9px);border:1px solid rgba(255,255,255,.7);border-radius:14px;padding:10px 12px;box-shadow:0 5px 22px #18344a22}
+#stats{position:absolute;top:12px;left:12px;display:flex;gap:7px;flex-wrap:wrap;max-width:calc(100% - 24px);font-size:12px;font-weight:700}
+#objective{position:absolute;top:84px;left:12px;max-width:230px;font-size:12px}
+#hint{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);font-size:13px;font-weight:700;display:none}
+#joystick{position:absolute;bottom:26px;left:24px;width:118px;height:118px;border-radius:50%;background:#ffffff55;border:2px solid #fff9;pointer-events:auto;touch-action:none}
+#stick{position:absolute;width:48px;height:48px;border-radius:50%;background:#fff;box-shadow:0 3px 12px #0003;left:33px;top:33px}
+#actions{position:absolute;right:18px;bottom:28px;display:flex;flex-direction:column;gap:10px;pointer-events:auto}
+.action{border:0;border-radius:50%;width:64px;height:64px;background:#173f58;color:white;font-size:12px;font-weight:800;box-shadow:0 5px 15px #0003}
+#topright{position:absolute;right:12px;top:12px;pointer-events:auto}
+#menuBtn{border:0;border-radius:12px;padding:10px 13px;background:#173f58;color:white;font-weight:700}
+.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:linear-gradient(135deg,#18394dcc,#172a42dd);z-index:5}
+.card{width:min(520px,100%);max-height:92vh;overflow:auto;background:#f8fafb;border-radius:22px;padding:22px;box-shadow:0 18px 60px #0005}
+h1{font-size:30px;line-height:1;margin:0 0 8px;letter-spacing:-1px}h2{font-size:19px;margin:0 0 12px}
+.sub{color:#53616d;font-size:14px;line-height:1.45;margin:0 0 18px}
+label{display:block;font-size:12px;font-weight:800;margin:13px 0 5px;color:#46535e}
+input,select{width:100%;padding:12px;border:1px solid #ccd5dc;border-radius:11px;background:white;font-size:16px}
+.primary{width:100%;border:0;border-radius:12px;padding:14px;background:#176184;color:white;font-size:16px;font-weight:800;margin-top:18px}
+.secondary{border:1px solid #c9d3da;border-radius:10px;padding:10px;background:white;font-weight:700}
+#toast{position:fixed;z-index:8;left:50%;bottom:165px;transform:translateX(-50%);background:#142f43;color:white;padding:11px 15px;border-radius:12px;font-size:13px;font-weight:700;display:none;max-width:85%;text-align:center}
+#jobModal{display:none}
+.small{font-size:12px;color:#5d6b76;line-height:1.4}
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div id="hud">
+ <div id="stats">
+  <div class="panel">💶 <span id="money">€450</span></div>
+  <div class="panel">🕒 <span id="clock">08:00</span></div>
+  <div class="panel">🍎 <span id="food">100%</span></div>
+  <div class="panel">⚡ <span id="energy">100%</span></div>
+ </div>
+ <div id="objective" class="panel">📍 <b>Obiettivo</b><br>Esplora la città: supermercato, casa e lavoro.</div>
+ <div id="hint" class="panel">Sei vicino a un luogo utile</div>
+ <div id="topright"><button id="menuBtn">☰ Menu</button></div>
+ <div id="joystick"><div id="stick"></div></div>
+ <div id="actions"><button class="action" id="interact">AZIONE</button><button class="action" id="run">CORSA</button></div>
+</div>
+<div class="overlay" id="start">
+ <div class="card">
+  <div style="font-size:12px;font-weight:900;color:#176184;letter-spacing:2px;margin-bottom:12px">PROTOTIPO 3D • MOBILE</div>
+  <h1>MY LIFE</h1>
+  <p class="sub">La vita che scegli. Crea il tuo personaggio, esplora una piccola regione e inizia a costruire la tua indipendenza.</p>
+  <label for="playerName">Nome del personaggio</label><input id="playerName" value="Alex" maxlength="18">
+  <label for="age">Età iniziale</label><select id="age"><option>18</option><option selected>20</option><option>22</option><option>25</option><option>30</option><option>35</option><option>40</option></select>
+  <label for="look">Aspetto iniziale</label><select id="look"><option value="0">Capelli castani</option><option value="1">Capelli biondi</option><option value="2">Capelli neri</option><option value="3">Capelli rossi</option></select>
+  <label for="cash">Situazione economica iniziale</label><select id="cash"><option value="250">In difficoltà — €250</option><option value="450" selected>In cerca di indipendenza — €450</option><option value="900">Qualche risparmio — €900</option></select>
+  <button class="primary" id="startBtn">INIZIA LA TUA VITA</button>
+  <p class="small" style="margin-top:12px">Questo è un prototipo dimostrativo: mappa, personaggio, movimento e prima attività economica sono già inclusi. Famiglia, animali, città aggiuntive e salvataggi arriveranno nelle prossime versioni.</p>
+ </div>
+</div>
+<div class="overlay" id="shopModal" style="display:none">
+ <div class="card">
+  <div style="font-size:12px;font-weight:900;color:#176184;letter-spacing:1px">SUPERMERCATO</div>
+  <h2 style="margin-top:8px">Fai la tua spesa</h2>
+  <p class="sub">Scegli cosa comprare. La spesa finirà nel carrello: poi dovrai portarla a casa e riporla nel frigorifero.</p>
+  <div id="shopItems"></div>
+  <div class="panel" style="margin-top:12px">Totale carrello: <b id="cartTotal">€0</b></div>
+  <button class="primary" id="buyGroceries">PAGA E TORNA A CASA</button>
+  <button class="secondary" id="closeShop" style="width:100%;margin-top:9px">Esci dal supermercato</button>
+ </div>
+</div>
+<div class="overlay" id="homeModal" style="display:none">
+ <div class="card">
+  <div style="font-size:12px;font-weight:900;color:#176184;letter-spacing:1px">CASA TUA</div>
+  <h2 style="margin-top:8px">Cucina e frigorifero</h2>
+  <p class="sub">La spesa che hai acquistato è nel sacchetto. Mettila in frigorifero, poi prepara qualcosa da mangiare.</p>
+  <div class="panel"><b>🛍️ Sacchetto della spesa</b><div id="bagList" class="small">Vuoto</div></div>
+  <button class="secondary" id="putAway" style="width:100%;margin-top:10px">RIPONI TUTTO IN FRIGORIFERO</button>
+  <div class="panel" style="margin-top:12px"><b>🧊 Frigorifero</b><div id="fridgeList" class="small">Vuoto</div></div>
+  <h2 style="margin-top:16px">🍳 Cosa vuoi cucinare?</h2>
+  <div id="recipes"></div>
+  <button class="secondary" id="closeHome" style="width:100%;margin-top:12px">Esci di casa</button>
+ </div>
+</div>
+<div class="overlay" id="jobModal">
+ <div class="card">
+  <div style="font-size:12px;font-weight:900;color:#176184;letter-spacing:1px">AGENZIA DEL LAVORO</div>
+  <h2 style="margin-top:8px">Il tuo primo impiego</h2>
+  <p class="sub">Il minimarket cerca una persona per il turno del mattino. Completa il turno per ricevere lo stipendio.</p>
+  <div class="panel" style="margin:12px 0"><b>Commessa / Addetta scaffali</b><br>Turno: 08:00–14:00<br>Retribuzione: <b>€85</b><br><span class="small">Il tempo di gioco avanzerà durante il turno.</span></div>
+  <button class="primary" id="takeJob">ACCETTA IL TURNO</button>
+  <button class="secondary" id="closeJob" style="width:100%;margin-top:9px">Non adesso</button>
+ </div>
+</div>
+<div id="toast"></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+const root=document.getElementById('game');
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0x9bc5df); scene.fog=new THREE.Fog(0x9bc5df,45,150);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,250);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xe5f5ff,0x63734d,2));
+const sun=new THREE.DirectionalLight(0xffedcc,2.2);sun.position.set(-35,55,25);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-65;sun.shadow.camera.right=65;sun.shadow.camera.top=65;sun.shadow.camera.bottom=-65;scene.add(sun);
+const mat=(color,rough=.85)=>new THREE.MeshStandardMaterial({color,roughness:rough});
+const grass=mat(0x6e9c63),road=mat(0x454b50),side=mat(0xc8c1a9),white=mat(0xf3eee0),glass=mat(0x83b7c9,.35);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(220,220),grass);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+function cube(w,h,d,m,x,y,z){let o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
+function roadLine(x,z,w,d){cube(w,.08,d,road,x,.03,z)}
+roadLine(0,0,13,220);roadLine(0,0,220,11);roadLine(-42,0,7,150);roadLine(42,0,7,150);roadLine(0,-43,130,7);roadLine(0,43,130,7);
+function building(x,z,w,d,h,color){let b=cube(w,h,d,mat(color),x,h/2,z);cube(w*1.08,.35,d*1.08,mat(0x754c3b),x,h+.12,z);for(let yy=1.4;yy<h-0.5;yy+=2.1)for(let xx=-w/2+1;xx<w/2-.3;xx+=2.3){let win=new THREE.Mesh(new THREE.BoxGeometry(.85,1.05,.08),glass);win.position.set(x+xx,yy,z+d/2+.05);scene.add(win)}}
+const colors=[0xd7c2a2,0xd0d9d5,0xe4c3b2,0xc4d0df,0xd9d2b6,0xb9c9bb];
+for(let i=0;i<12;i++){let x=(i%4-1.5)*15-30,z=Math.floor(i/4)*18-18;if(Math.abs(x)<10)x+=17;building(x,z,9,10,7+(i%3)*2,colors[i%colors.length])}
+for(let i=0;i<16;i++){let x=(i%4-1.5)*18+5,z=Math.floor(i/4)*18+55;building(x,z,10,11,6+(i%2)*3,colors[(i+2)%colors.length])}
+function tree(x,z,s=1){let trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22*s,.32*s,2*s,7),mat(0x76513a));trunk.position.set(x,s,z);scene.add(trunk);let crown=new THREE.Mesh(new THREE.SphereGeometry(1.15*s,9,7),mat(0x3e7545));crown.position.set(x,2.3*s,z);crown.castShadow=true;scene.add(crown)}
+for(let i=0;i<65;i++){let x=(Math.random()-.5)*180,z=(Math.random()-.5)*180;if(Math.abs(x)>12&&Math.abs(z)>12)tree(x,z,.7+Math.random()*.65)}
+// Landmark: minimarket, job sign, home, bus stop
+building(10,-12,12,10,7,0xd6b58c);cube(5,.8,.15,mat(0x176184),10,3.5,-6.85);
+const sign=cube(2.8,1.2,.25,mat(0x176184),10,1.6,-18); 
+function labelSprite(text,x,y,z){let c=document.createElement('canvas');c.width=512;c.height=128;let ctx=c.getContext('2d');ctx.fillStyle='#153c55';ctx.fillRect(0,0,512,128);ctx.fillStyle='white';ctx.font='bold 58px sans-serif';ctx.textAlign='center';ctx.fillText(text,256,82);let tex=new THREE.CanvasTexture(c);let sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));sp.scale.set(8,2,1);sp.position.set(x,y,z);scene.add(sp)}
+labelSprite('LAVORO',10,5,-18);labelSprite('CASA',-18,5,10);labelSprite('CENTRO',0,5,25);
+building(-18,10,11,12,7,0xc8b6a0);
+const marker=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,2.4,8),mat(0xf2c94c));marker.position.set(10,1.2,-18);scene.add(marker);
+const avatar=new THREE.Group();scene.add(avatar);
+const body=new THREE.Mesh(new THREE.CapsuleGeometry(.42,.9,5,10),mat(0x23658a));body.position.y=1.15;body.castShadow=true;avatar.add(body);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.34,16,12),mat(0xe5b895));head.position.y=2.05;head.castShadow=true;avatar.add(head);
+const hair=new THREE.Mesh(new THREE.SphereGeometry(.355,14,10,0,Math.PI*2,0,Math.PI*.55),mat(0x553323));hair.position.y=2.16;avatar.add(hair);
+const legs=[];for(let x of [-.19,.19]){let l=new THREE.Mesh(new THREE.CapsuleGeometry(.15,.58,4,8),mat(0x293c50));l.position.set(x,.42,0);avatar.add(l);legs.push(l)}
+avatar.position.set(0,0,8);
+const clockEl=document.getElementById('clock'),moneyEl=document.getElementById('money'),foodEl=document.getElementById('food'),energyEl=document.getElementById('energy'),objective=document.getElementById('objective');
+let money=450,food=100,energy=100,minutes=8*60,started=false,working=false,workLeft=0,nearJob=false,move={x:0,y:0},running=false;
+const toast=document.getElementById('toast');let toastTimer;
+function say(t){toast.textContent=t;toast.style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.style.display='none',2400)}
+function updateHud(){moneyEl.textContent='€'+Math.floor(money);foodEl.textContent=Math.floor(food)+'%';energyEl.textContent=Math.floor(energy)+'%';let h=Math.floor(minutes/60)%24,m=minutes%60;clockEl.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')}
+function advance(min){minutes=(minutes+min)%(24*60);food=Math.max(0,food-min*.012);energy=Math.max(0,energy-min*.009);updateHud()}
+function startGame(){money=Number(document.getElementById('cash').value);let color=Number(document.getElementById('look').value);hair.material=mat([0x553323,0xc49a52,0x171717,0x9a4932][color]);document.getElementById('start').style.display='none';document.getElementById('hud').style.display='block';started=true;updateHud();say('Benvenuto, '+document.getElementById('playerName').value+'! Cerca il cartello LAVORO.')}
+document.getElementById('startBtn').onclick=startGame;
+const jobModal=document.getElementById('jobModal');
+const shopModal=document.getElementById('shopModal'),homeModal=document.getElementById('homeModal');
+const products=[{name:'Pane',price:2,qty:0},{name:'Latte',price:2,qty:0},{name:'Pasta',price:2,qty:0},{name:'Pomodori',price:3,qty:0},{name:'Uova',price:3,qty:0},{name:'Formaggio',price:4,qty:0},{name:'Insalata',price:2,qty:0},{name:'Pollo',price:7,qty:0},{name:'Mele',price:3,qty:0}];
+let bag={},fridge={};
+const recipes=[{name:'Pasta al pomodoro',cost:0,needs:{'Pasta':1,'Pomodori':1},gain:38},{name:'Uova e pane',needs:{'Uova':1,'Pane':1},gain:30},{name:'Insalata',needs:{'Insalata':1,'Pomodori':1},gain:25},{name:'Pollo con contorno',needs:{'Pollo':1,'Insalata':1},gain:42}];
+function renderShop(){let box=document.getElementById('shopItems');box.innerHTML='';products.forEach((p,i)=>{let row=document.createElement('div');row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #e2e7eb;gap:8px';row.innerHTML='<div><b>'+p.name+'</b><div class="small">€'+p.price+' ciascuno</div></div><div style="display:flex;align-items:center;gap:9px"><button class="secondary" data-minus="'+i+'">−</button><b id="qty'+i+'">'+p.qty+'</b><button class="secondary" data-plus="'+i+'">+</button></div>';box.appendChild(row)});box.querySelectorAll('[data-plus]').forEach(b=>b.onclick=()=>{products[+b.dataset.plus].qty++;renderShop()});box.querySelectorAll('[data-minus]').forEach(b=>b.onclick=()=>{let p=products[+b.dataset.minus];p.qty=Math.max(0,p.qty-1);renderShop()});document.getElementById('cartTotal').textContent='€'+products.reduce((s,p)=>s+p.price*p.qty,0)}
+function listStock(obj){let entries=Object.entries(obj).filter(([k,v])=>v>0);return entries.length?entries.map(([k,v])=>k+' × '+v).join('<br>'):'Nessun alimento'}
+function renderHome(){document.getElementById('bagList').innerHTML=listStock(bag);document.getElementById('fridgeList').innerHTML=listStock(fridge);let box=document.getElementById('recipes');box.innerHTML='';recipes.forEach((r,i)=>{let b=document.createElement('button');b.className='secondary';b.style.cssText='width:100%;text-align:left;margin-top:7px';b.textContent=r.name+'  •  +'+r.gain+'% sazietà';b.onclick=()=>{let missing=Object.entries(r.needs).filter(([k,v])=>(fridge[k]||0)<v);if(missing.length){say('Ti mancano: '+missing.map(x=>x[0]).join(', '));return}Object.entries(r.needs).forEach(([k,v])=>fridge[k]-=v);food=Math.min(100,food+r.gain);advance(25);renderHome();say('Hai cucinato '+r.name+'! Buon appetito.');};box.appendChild(b)})}
+function interact(){if(!started)return;if(nearJob&&!working){jobModal.style.display='flex';return}if(working){say('Sei al lavoro. Completa il turno!');return}if(avatar.position.distanceTo(new THREE.Vector3(10,0,-18))<7){products.forEach(p=>p.qty=0);renderShop();shopModal.style.display='flex';return}if(avatar.position.distanceTo(new THREE.Vector3(-18,0,10))<7){renderHome();homeModal.style.display='flex';return}say('Esplora la città: cerca il supermercato, casa e il cartello LAVORO.')}
+document.getElementById('interact').onclick=interact;
+document.getElementById('closeJob').onclick=()=>jobModal.style.display='none';
+document.getElementById('closeShop').onclick=()=>shopModal.style.display='none';
+document.getElementById('buyGroceries').onclick=()=>{let total=products.reduce((s,p)=>s+p.price*p.qty,0);if(total===0){say('Il carrello è vuoto.');return}if(total>money){say('Non hai abbastanza soldi per questa spesa.');return}money-=total;products.forEach(p=>{if(p.qty)bag[p.name]=(bag[p.name]||0)+p.qty;p.qty=0});updateHud();shopModal.style.display='none';say('Spesa pagata! Torna a casa e riponi gli alimenti nel frigorifero.');};
+document.getElementById('putAway').onclick=()=>{Object.entries(bag).forEach(([k,v])=>fridge[k]=(fridge[k]||0)+v);bag={};renderHome();say('Hai sistemato la spesa nel frigorifero.');};
+document.getElementById('closeHome').onclick=()=>homeModal.style.display='none';
+document.getElementById('takeJob').onclick=()=>{jobModal.style.display='none';working=true;workLeft=360;objective.innerHTML='💼 <b>Turno di lavoro</b><br>Lavora per 6 ore. Premi AZIONE per controllare il turno.';say('Turno iniziato! Le ore passeranno mentre lavori.');};
+document.getElementById('menuBtn').onclick=()=>say('Menu: prototipo 1.0 • Personaggio: '+document.getElementById('playerName').value+' • Età: '+document.getElementById('age').value);
+document.getElementById('run').onpointerdown=()=>running=true;document.getElementById('run').onpointerup=()=>running=false;document.getElementById('run').onpointerleave=()=>running=false;
+const joy=document.getElementById('joystick'),stick=document.getElementById('stick');let joyId=null;
+function setJoy(e){let r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,l=Math.hypot(dx,dy),max=40;if(l>max){dx=dx/l*max;dy=dy/l*max}move.x=dx/max;move.y=dy/max;stick.style.transform=`translate(${dx}px,${dy}px)`}
+joy.addEventListener('pointerdown',e=>{joyId=e.pointerId;joy.setPointerCapture(joyId);setJoy(e)});
+joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)setJoy(e)});
+function resetJoy(){joyId=null;move={x:0,y:0};stick.style.transform='translate(0,0)'}
+joy.addEventListener('pointerup',resetJoy);joy.addEventListener('pointercancel',resetJoy);
+let last=performance.now(),camAngle=0;
+renderer.domElement.addEventListener('pointerdown',e=>{if(e.clientX>innerWidth*.42){camAngle+=.18}});
+function loop(now){requestAnimationFrame(loop);let dt=Math.min((now-last)/1000,.04);last=now;
+ if(started&&!working){let speed=(running?8:4.3);let dx=move.x, dz=move.y;if(Math.abs(dx)+Math.abs(dz)>.05){let len=Math.hypot(dx,dz);dx/=Math.max(1,len);dz/=Math.max(1,len);let a=camAngle;let wx=dx*Math.cos(a)+dz*Math.sin(a),wz=dz*Math.cos(a)-dx*Math.sin(a);avatar.position.x+=wx*speed*dt;avatar.position.z+=wz*speed*dt;avatar.rotation.y=Math.atan2(wx,wz);advance(dt*(running?2.4:1.4));legs.forEach((l,i)=>l.rotation.x=Math.sin(now*.012+i*Math.PI)*.45)}else legs.forEach(l=>l.rotation.x*=.8);
+ avatar.position.x=THREE.MathUtils.clamp(avatar.position.x,-95,95);avatar.position.z=THREE.MathUtils.clamp(avatar.position.z,-95,95);
+ }
+ if(working){let mins=Math.max(1,Math.floor(dt*32));workLeft-=mins;advance(mins);if(workLeft<=0){working=false;money+=85;energy=Math.max(0,energy-22);objective.innerHTML='📍 <b>Obiettivo</b><br>Hai completato il turno! Esplora e cerca altri modi per vivere.';say('Turno completato! Hai ricevuto €85.');}}
+ nearJob=avatar.position.distanceTo(new THREE.Vector3(10,0,-18))<6;
+ document.getElementById('hint').style.display=nearJob?'block':'none';
+ let target=new THREE.Vector3(avatar.position.x+Math.sin(camAngle)*8,5.5,avatar.position.z+Math.cos(camAngle)*8);
+ camera.position.lerp(target,.09);camera.lookAt(avatar.position.x,1.3,avatar.position.z);
+ let t=(minutes/(24*60))*Math.PI*2;sun.position.set(Math.cos(t)*50,Math.max(12,Math.sin(t)*55),25);sun.intensity=.7+Math.max(0,Math.sin(t))*1.7;
+ renderer.render(scene,camera)}
+requestAnimationFrame(loop);
+addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script>
+</body></html>
